@@ -11,5 +11,4 @@ float **create_imat_of_m_by_n(int m, int n);
 void transform(float **transMat, float **mat, int m, int n);
 void vecMultiply(float **matA, float *matB, float *res, int n);
 float **get_scale_mat(float *trans, int n);
-float **get_rot_mat2D(float theta, float *axes, int n);
-float **get_rot_mat3D(float theta, float *axes, int n);
+float **get_rot_mat(float theta, float *axes, int n);

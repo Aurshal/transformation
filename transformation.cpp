@@ -30,23 +30,12 @@ int main() {
   float theta;
   cout << "Enter rotation theta in rad: " << endl;
   cin >> theta;
-  if (n <= 3) {
-    float axes[n - 1];
-    cout << "Enter axes vector: " << endl;
-    for (int i = 0; i < n - 1; i++) {
-      cin >> axes[i];
-    }
-    rotMat = get_rot_mat2D(theta, axes, n);
+  float axes[n - 1];
+  cout << "Enter axes vector: " << endl;
+  for (int i = 0; i < n - 1; i++) {
+    cin >> axes[i];
   }
-
-  if (n == 4) {
-    float axes[n - 1];
-    cout << "Enter axes vector: " << endl;
-    for (int i = 0; i < n - 1; i++) {
-      cin >> axes[i];
-    }
-    rotMat = get_rot_mat3D(theta, axes, n);
-  }
+  rotMat = get_rot_mat(theta, axes, n);
   float **composite = create_mat_of_m_by_n(n, n);
   multiply(scaleMat, rotMat, composite, n);
   multiply(composite, transMat, composite, n);
@@ -125,7 +114,7 @@ float **get_scale_mat(float *trans, int n) {
   }
   return scaleMat;
 }
-float **get_rot_mat2D(float theta, float *axes, int n) {
+float **get_rot_mat(float theta, float *axes, int n) {
   float **rotMat = create_imat_of_m_by_n(n, n);
   theta = theta * (M_PI / 180);
   float x = axes[0];
@@ -133,32 +122,25 @@ float **get_rot_mat2D(float theta, float *axes, int n) {
   float s = sin(theta);
   float c = cos(theta);
   float omc = 1 - cos(theta);
+  if (n == 3) {
+    float z = axes[2];
+    rotMat[0][0] = c + x * x * omc;
+    rotMat[0][1] = x * y * omc - z * s;
+    rotMat[0][2] = x * y * omc + y * s;
+    rotMat[1][0] = y * x * omc + z * s;
+    rotMat[1][1] = c + y * y * omc;
+    rotMat[1][2] = y * z * omc - x * s;
+    rotMat[2][0] = z * x * omc - y * s;
+    rotMat[2][1] = z * y * omc + x * s;
+    rotMat[2][2] = c + z * z * omc;
+    return rotMat;
+  }
   rotMat[0][0] = c;
   rotMat[0][1] = -s;
   rotMat[0][2] = x * omc + y * s;
   rotMat[1][0] = s;
   rotMat[1][1] = c;
   rotMat[1][2] = y * omc - x * s;
-  return rotMat;
-}
-float **get_rot_mat3D(float theta, float *axes, int n) {
-  float **rotMat = create_imat_of_m_by_n(n, n);
-  theta = theta * (M_PI / 180);
-  float x = axes[0];
-  float y = axes[1];
-  float z = axes[2];
-  float omc = 1 - cos(theta);
-  float s = sin(theta);
-  float c = cos(theta);
-  rotMat[0][0] = c + x * x * omc;
-  rotMat[0][1] = x * y * omc - z * s;
-  rotMat[0][2] = x * y * omc + y * s;
-  rotMat[1][0] = y * x * omc + z * s;
-  rotMat[1][1] = c + y * y * omc;
-  rotMat[1][2] = y * z * omc - x * s;
-  rotMat[2][0] = z * x * omc - y * s;
-  rotMat[2][1] = z * y * omc + x * s;
-  rotMat[2][2] = c + z * z * omc;
   return rotMat;
 }
 float **create_mat_of_m_by_n(int m, int n) {
